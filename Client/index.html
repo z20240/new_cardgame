@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html>
+
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+
+        <title>Light of Dark</title>
+
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css" integrity="sha384-PsH8R72JQ3SOdhVi3uxftmaW6Vc51MKb0q5P2rRUpPvrszuE4W1povHYgTpBfshb" crossorigin="anonymous">
+        <link rel="stylesheet" href="style.css" type="text/css" />
+
+        <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+        <!-- <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js" integrity="sha256-VazP97ZCwtekAsvgPBSUwPFKdrwD3unUfSGVYrahUqU=" crossorigin="anonymous"></script> -->
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.3/umd/popper.min.js" integrity="sha384-vFJXuSJphROIrBnz7yo7oB41mKfc8JzQZiCq4NCceLEaO4IHwicKwpJf9c9IpFgh" crossorigin="anonymous"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/js/bootstrap.min.js" integrity="sha384-alpBpkh1PFOepccYVYDB4do5UnbKysX5WZXm3XxPqe5iKTfUKjNkCk9SaVuEZflJ" crossorigin="anonymous"></script>
+
+        <script src="js/lib/jquery-1.8.0.min.js"></script>
+
+        <script  src='https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.0.1/socket.io.js' charset='utf-8'></script>
+
+        <!-- custom -->
+        <script src="js/Constant.js"></script>
+        <script src="js/globalVar.js"></script>
+        <script src="js/util.js"></script>
+        <script src="js/client.js"></script>
+        <!-- <script src="js/chat.js"></script> -->
+        <script src="js/game.js"></script>
+        <script src="js/pop.js"></script>
+    </head>
+
+    <body>
+        <div id="app">
+            <div id="loginView">
+                <div id="loginTitle">Test Game</div>
+                <table>
+                    <tr><td><input id="loginUser" type="text" placeholder="enter your name" /></td></tr>
+                    <tr><td><input name="channels" type="text" id="channelList" placeholder="enter your channel"/></td>
+                    <tr><td><input id="login" type='button' value="join" /></td></tr>
+                </table>
+                <div id="loginError">
+                </div>
+            </div>
+
+            <div id="waitingView">
+                <div id="loginTitle">Waiting for player</div>
+                <div id="loginTitle"><img src="images/loading.gif" alt=""></div>
+                <div id="loginError">
+                </div>
+            </div>
+
+            <div id="gameOverTitle">
+                <h1 id="gameOverMsg"></h1>
+                <button class='btn btn-primary' onclick='redirct()'>retry</button>
+            </div>
+
+            <div class="container-fluid" id='contant_board'>
+                <div class="row">
+                    <div class="col" id="game_board">
+                        <button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#toolBar">選單</button>
+
+                        <div id="enemy_status" class="row container-fluid">
+                            <div class="col"></div>
+                            <div class="col">
+                                <table class="table table-bordered">
+                                    <th class="active" id="div_enemyPlayer">
+                                        <!-- <div class="row"> -->
+                                        <div class="btn-group">
+                                            <button type="button" class="btn btn-sm" data-toggle="modal" data-target="#ememy_buff_modal">
+                                                <span>
+                                                    <img src="images/img_charactor.jpg" alt="" style="height:24px; width:24px;">
+                                                    玩家 <span id="enemyPlayer" style="font-size:30px;"></span>
+                                                </span>
+                                            </button>
+                                        </div>
+
+                                        <div class="col">
+                                            <span><img src="images/png_24px/005-sword.png" alt=""></span><span id='enemyAtk' style="font-size:24px;"> 0 </span>
+                                            <span><img src="images/png_24px/001-sorcery-book.png" alt=""></span><span id='enemyMatk' style="font-size:24px;"> 0 </span>
+                                            <span><img src="images/png_24px/003-shield.png" alt=""></span><span id='enemyDef' style="font-size:24px;"> 0 </span>
+                                        </div>
+                                        <!-- </div> -->
+                                    </th>
+                                </table>
+                            </div>
+                            <div class="col"></div>
+                        </div>
+
+                        <div id="mob_area" class="row container-fluid center">
+                            <table class="table table-bordered visual_3d">
+                                <tr>
+                                    <th class="active">
+                                        <span><img src="images/png_24px/black-hole.png" width="40" alt=""><strong id='enemyBanishSize' style="font-size:24px;"> 0 </strong></span>
+                                    </th>
+                                    <th class="active">
+                                        <span><img src="images/png_24px/halloween-graveyard.png" width="40" alt=""><strong id='enemyGraveSize' style="font-size:24px;"> 0 </strong></span>
+                                    </th>
+                                    <th class="active">
+                                        <div class="row">
+                                            <div id='enemyDeck' class="col"></div>
+                                            <div class="col">
+                                                <span>
+                                                    <!-- <img src="images/png_24px/deck.png" width="40" alt=""> -->
+                                                    <strong id='enemyDeckSize' style="font-size:24px;">  0  </strong>
+                                                </span>
+                                            </div>
+                                        </div>
+                                    </th>
+                                </tr>
+
+                                <!-- player status -->
+                                <tr>
+                                    <th class="active">
+                                        <div class="row">
+                                            <div id='playerDeck' class="col"></div>
+                                            <div class="col">
+                                                <p>
+                                                    <!-- <img src="images/png_24px/deck.png" width="40" alt=""> -->
+                                                    <strong id='playerDeckSize' style="font-size:24px;">  0  </strong>
+                                                </p>
+                                            </div>
+                                        </div>
+                                    </th>
+                                    <th class="active">
+                                        <div class="btn-group dropup">
+                                            <button type="button" class="btn btn-sm dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                                <span>
+                                                    <img src="images/png_24px/halloween-graveyard.png" width="40" alt="">
+                                                    <strong id='playerGraveSize' style="font-size:24px;"> 0 </strong>
+                                                </span>
+                                            </button>
+                                            <div class="dropdown-menu" id="player_grave">
+                                            </div>
+                                        </div>
+                                    </th>
+                                    <th class="active">
+                                        <span><img src="images/png_24px/black-hole.png" width="40" alt=""><strong id='playerBanishSize' style="font-size:24px;"> 0 </strong></span>
+                                    </th>
+                                </tr>
+                            </table>
+                        </div>
+
+                        <div id="players_hand" class="row container-fluid center">
+                            <table class="table table-bordered">
+                                    <tr>
+                                        <th class="active">
+                                            <div class="btn-group dropup">
+                                                <button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#player_buff_modal">
+                                                    <span>
+                                                        <img src="images/img_charactor.jpg" alt="" style="height:24px; width:24px;">
+                                                        玩家 <span id="you" style="font-size:30px;"></span>
+                                                    </span>
+                                                </button>
+                                            </div>
+
+                                            <div>
+                                                <span><img src="images/png_24px/005-sword.png" alt=""></span><span id='playerAtk' style="font-size:24px;"> 0 </span>
+                                                <span><img src="images/png_24px/001-sorcery-book.png" alt=""></span><span id='playerMatk' style="font-size:24px;"> 0 </span>
+                                                <span><img src="images/png_24px/003-shield.png" alt=""></span><span id='playerDef' style="font-size:24px;"> 0 </span>
+                                            </div>
+                                        </th>
+                                        <th class="active">
+                                            <div class='center' id="div_handcard1">
+                                                <img id='handcard1' src="" alt="">
+                                                <!-- <button class='drag-source' id='handcard1' draggable="true">
+                                                    <p>
+                                                        <img src="images/png_16px/coins_16px.png" alt=""> <label id='hand_cost1'></label>
+                                                        <img id="img_hand_blood1" src="images/blood.png" alt="" style="height:16px; width:16px;"> <label id='hand_blood1'></label>
+                                                        <div><label id='hand_name1'></label></div>
+                                                    </p>
+                                                    <img src="images/png_16px/sword_16px.png" alt=""> <label id='hand_atk1'></label>
+                                                    <img src="images/png_16px/shield_16px.png" alt=""> <label id='hand_def1'></label>
+                                                </button> -->
+                                            </div>
+                                        </th>
+                                        <th class="active">
+                                            <div class='center' id="div_handcard2">
+                                                <img id='handcard2' src="" alt="">
+                                                <!-- <button class='drag-source' id='handcard2' draggable="true">
+                                                    <p>
+                                                        <img src="images/png_16px/coins_16px.png" alt=""> <label id='hand_cost2'></label>
+                                                        <img id="img_hand_blood2" src="images/blood.png" alt="" style="height:16px; width:16px;"> <label id='hand_blood2'></label>
+                                                        <div><label id='hand_name2'></label></div>
+                                                    </p>
+                                                    <img src="images/png_16px/sword_16px.png" alt=""> <label id='hand_atk2'></label>
+                                                    <img src="images/png_16px/shield_16px.png" alt=""> <label id='hand_def2'></label>
+                                                </button> -->
+                                            </div>
+                                        </th>
+                                    </tr>
+                            </table>
+                        </div>
+
+                        <div>
+                            <div class="progress">
+                                <div class="progress-bar bg-success" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="10" style="width: 0%" ></div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+        <div id="pop">
+            <div id="popHead">
+                <a id="popClose" title="close">Close</a>
+                <h2>Tip</h2>
+            </div>
+            <div id="popContent">
+                <dl>
+                    <dd id="popIntro"></dd>
+                </dl>
+                <p id="popMore">No Tip Again</p>
+            </div>
+        </div>
+
+
+    <!-- Modal(歷程、選單) -->
+    <div class="modal fade" id="toolBar" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <ul class="nav nav-tabs" id="funcTab" role="tablist">
+                    <li class="nav-item">
+                        <a class="nav-link active" id="gamelog-tab" data-toggle="tab" href="#gamelog" role="tab" aria-controls="gamelog" aria-selected="true">歷程</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" id="chat-tab" data-toggle="tab" href="#chat_room" role="tab" aria-controls="chat_room" aria-selected="false">聊天</a>
+                    </li>
+                </ul>
+                <div class="tab-content" id='sideBar'>
+                    <div class="tab-pane fade show active" id="gamelog" role="tabpanel" aria-labelledby="gamelog-tab" style="overflow:scroll; height:80vh">
+                    </div>
+
+                    <div class="tab-pane fade" id="chat_room" role="tabpanel" aria-labelledby="chat_room-tab">
+                        <ul id="status">
+                            <li>
+                                users:
+                                <select name="users" id="usersList">
+                                    <option value="*">all</option>
+                                </select>
+                            </li>
+                            <li>
+                                name:
+                                <span id="name">
+                                </span>
+                            </li>
+                            <li>
+                                room:
+                                <span id="room">
+                                </span>
+                            </li>
+                        </ul>
+                        <input class='form-control' tabindex="1" type="text" id="entry" />
+                        <div id="chatMesage" style="overflow:scroll; height:60vh"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="ememy_buff_modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="dropdown-menu" id="ememy_buff"></div>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="modal fade" id="player_buff_modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="dropdown-menu" id="player_buff"></div>
+            </div>
+        </div>
+    </div>
+
+
+    </body>
+
+</html>

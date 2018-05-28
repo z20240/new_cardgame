@@ -1,0 +1,13 @@
+{
+  "name": "static",
+  "version": "0.0.0",
+  "private": true,
+  "dependencies": {
+    "body-parser": "~1.17.1",
+    "chalk": "^2.1.0",
+    "cookie-parser": "~1.4.3",
+    "debug": "^2.6.9",
+    "lodash": "^4.17.4",
+    "request": "^2.83.0"
+  }
+}
