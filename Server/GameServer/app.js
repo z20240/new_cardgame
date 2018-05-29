@@ -9,7 +9,7 @@ var index = require('./routes/index');
 var users = require('./routes/users');
 // var cardMethod = require('./routes/cardMethod');
 var StaticDataManager = require('../Static/StaticDataManager');
-var game = require('./socket/socket'); // 2. 將剛剛寫的 socket.js 導入
+var game = require('./Socket/socket'); // 2. 將剛剛寫的 socket.js 導入
 
 var app = express();
 app.io = require('socket.io')() ; // 3. 將 socket.io 導入
