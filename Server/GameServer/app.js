@@ -4,10 +4,10 @@ var favicon = require('serve-favicon');
 var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
+var domain = require('domain');
 
 var index = require('./routes/index');
 var users = require('./routes/users');
-// var cardMethod = require('./routes/cardMethod');
 var StaticDataManager = require('../Static/StaticDataManager');
 var game = require('./Socket/Socket'); // 2. 將剛剛寫的 socket.js 導入
 
@@ -33,6 +33,16 @@ app.use(function(req, res, next) { // 設定標頭
   res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
   next();
 });
+
+// 設定 catch error exception
+app.use(function (req, res, next) {
+    var reqDomain = domain.create();
+    reqDomain.on('error', function (err) { // 下面抛出的异常在这里被捕获
+        res.send(500, err.stack); // 成功给用户返回了 500
+    });
+    reqDomain.run(next);
+});
+
 
 // app.use('/cardMethod', cardMethod);
 
